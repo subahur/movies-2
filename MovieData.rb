@@ -39,7 +39,7 @@ class MovieData
 			movieid_userid_ratings_ht[movie_id][user_id] = movie_rating # a hash table with movieid at ary[0], userid at ary[1], rating at ary[2] into a already existing array
 		end
 		hash_tables = {1=>userid_movieid_ratings_ht , 2=>movieid_userid_ratings_ht}
-		return hash_tables	
+		hash_tables	
 	end
 
 	def load_test()
@@ -50,15 +50,15 @@ class MovieData
 			y = x.split(' ')
 			new_array.push( [y[0],y[1],y[2]] )
 		end
-		return new_array
+		new_array
 	end
 
 	# returns rating given by user u to movie m
 	def rating(u,m)
 		if @hash_tables[1][u].has_key?(m) # @userid_movieid_ratings[1] is hash table where each key user contains a hash tables with key=movie and values = ratings
-			return @hash_tables[1][u][m]
+			@hash_tables[1][u][m]
 		else
-			return 0 # make sure return 0 when the user has not rated a movie
+			0 # make sure return 0 when the user has not rated a movie
 		end
 	end
 
@@ -71,7 +71,7 @@ class MovieData
 		
 		if viewers_a != 0 # checks that there are viewers to movie 
 			viewers_a.each do |x| # aggregates all the ratings given to m by its watchers 
-				popularity = popularity + rating(x,m).to_f
+				popularity = popularity + rating(x,movie).to_f
 			end
 		end
 		if movies_u != 0
@@ -81,33 +81,33 @@ class MovieData
 		end 
 
 		if viewers_a == 0 && movies_u == 0
-			return 0
+			0
 		elsif viewers_a == 0 # when the movie has not been watched by anyone
-			return likeness/movies_u.length # returns the average of rating user u has given movies he/she has watched
+			likeness/movies_u.length # returns the average of rating user u has given movies he/she has watched
 		elsif movies_u == 0 # when there are no movies watched by users 
-			return popularity/viewers_a.length # return the popularity of the movie
+			popularity/viewers_a.length # return the popularity of the movie
 		else
-			return ((likeness/movies_u.length)+(popularity/viewers_a.length))/2 # returns the average of popularity of the movies and whether the user u is an easy rater or hard rater
+			((likeness/movies_u.length)+(popularity/viewers_a.length))/2 # returns the average of popularity of the movies and whether the user u is an easy rater or hard rater
 		end
 
 	end
 
-	#r eturns movies user u has seen
+	#r eturns movies user has seen
 	def movies(user)
 		if @hash_tables[1].has_key?(user)
-			return @hash_tables[1][user].keys # return the movies u has seen after finding u in the hashtable
+			@hash_tables[1][user].keys # return the movies u has seen after finding u in the hashtable
 		else 
-			return 0 # return 0 when u has not seen any movies or user inputs invalid user 
+			0 # return 0 when u has not seen any movies or user inputs invalid user 
 		end
 			
 	end
 
-	# returns a list of viewers of movie m 
+	# returns a list of viewers of movie  
 	def viewers(movie) 
 		if @hash_tables[2].has_key?(movie)
-			return @hash_tables[2][movie].keys # return keys or viewers of movie m
+			@hash_tables[2][movie].keys # return keys or viewers of movie m
 		else
-			return 0 # there are no viewers for the movie
+			0 # there are no viewers for the movie
 		end
 
 		
@@ -125,7 +125,7 @@ class MovieData
 			temp.each do |x|
 			x.push(predict(x[0].to_i,x[1].to_i))
 		end
-		return MovieTest.new(temp)
+		MovieTest.new(temp)
 	end
 
 	
@@ -143,7 +143,7 @@ class MovieTest
 		@ratings_test.each do |x|
 			total = total + (x[3].to_f-x[2].to_f).abs
 		end
-		return total/@ratings_test.length
+		total/@ratings_test.length
 	end
 
 	# returns the standard deviation of mean error
@@ -153,7 +153,7 @@ class MovieTest
 		@ratings_test.each do |x|
 			total = total + (((x[3].to_f-x[2].to_f).abs-temp)*((x[3].to_f-x[2].to_f).abs-temp))
 		end
-		return Math.sqrt(total/(@ratings_test.length))
+		Math.sqrt(total/(@ratings_test.length))
 	end
 
 	# returns the mean square error 
@@ -162,7 +162,7 @@ class MovieTest
 		@ratings_test.each do |x|
 			total = total + (x[3].to_f-x[2].to_f).abs*(x[3].to_f-x[2].to_f).abs
 		end
-		return Math.sqrt(total/@ratings_test.length)
+		Math.sqrt(total/@ratings_test.length)
 	end
 
 	# prints an array in the form of user movie ratings and prediction
@@ -174,16 +174,15 @@ class MovieTest
 
 end 
 
-# z = MovieData.new("ml-100k", :u1)
-# z.check
-# puts z.load_data()
-# puts z.rating(1,109)
-# puts z.movies(943)
-# puts z.viewers(1000)
-# puts z.predict(1,6)
-# t = z.run_test(10000)
-# puts t.mean
-# puts t.stddev
-# puts t.rms
-# t.to_a
+ z = MovieData.new("ml-100k", :u1)
+ puts z.load_data()
+ puts z.rating(1,109)
+ puts z.movies(943)
+ puts z.viewers(1000)
+ puts z.predict(1,6)
+ t = z.run_test(10000)
+ puts t.mean
+ puts t.stddev
+ puts t.rms
+ t.to_a
 
